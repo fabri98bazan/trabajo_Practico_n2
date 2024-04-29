@@ -1,10 +1,14 @@
 package ar.edu.unju.fi.ejercicio5.main;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import ar.edu.unju.fi.ejercicio5.model.PagoEfectivo;
+import ar.edu.unju.fi.ejercicio5.model.PagoTarjeta;
 import ar.edu.unju.fi.ejercicio5.model.Producto;
 import ar.edu.unju.fi.ejercicio5.model.Producto.categoria;
 import ar.edu.unju.fi.ejercicio5.model.Producto.origenFabricacion;
@@ -29,7 +33,7 @@ public class Main {
 					break;
 				
 				case 2:
-					
+					mostrarSubMenu(opc);
 					break;
 					
 				case 3:
@@ -63,7 +67,31 @@ public class Main {
 		System.out.println("\n1. Pago con efectivo.");
 		System.out.println("2. Pago con Tarjeta");
 		System.out.print("\nIngrese opcion: ");
-		opc=manejarExcepcionIngresoNumEntero();
+		do {
+			opc=manejarExcepcionIngresoNumEntero();
+		}while(opc<=0 || opc>2);
+		if(opc==2)
+		{
+			System.out.print("Ingrese nro. Tarjeta: ");
+			String nro_tarjeta=controlarIngresoCad();
+			LocalDate fecha_pago=LocalDate.now();
+		    System.out.print("Ingrese monto: ");
+		    double monto=manejarExcepcionIngresoNumReal();
+		    PagoTarjeta pag_tarj=new PagoTarjeta(nro_tarjeta, fecha_pago, monto);
+		    pag_tarj.realizarPago(monto);
+		    pag_tarj.imprimirRecibo();
+		}else
+		{
+			if(opc==1)
+			{
+				LocalDate fecha_pago=LocalDate.now();
+				System.out.print("Ingrese monto: ");
+			    double monto=manejarExcepcionIngresoNumReal();
+				PagoEfectivo pag_efectivo=new PagoEfectivo(monto, fecha_pago);
+				pag_efectivo.realizarPago(monto);
+				pag_efectivo.imprimirRecibo();
+			}
+		}
 		
 	}
 	
@@ -184,6 +212,22 @@ public class Main {
 			productos.forEach(t->System.out.println(t));
 		}else
 			System.out.println("Lista de productos vacia");
+	}
+	
+	/**
+	 * Control de ingreso de cadenas
+	 */
+	
+	public static String controlarIngresoCad()
+	{
+        String cad;
+        
+        do {
+            cad=sc.next();
+        } while (!cad.matches("[0-9]+") && cad.length()!=16);
+        
+        
+        return cad;
 	}
 	
 	
