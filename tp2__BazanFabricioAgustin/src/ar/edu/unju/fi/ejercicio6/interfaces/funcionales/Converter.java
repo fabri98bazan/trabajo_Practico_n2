@@ -11,6 +11,6 @@ public interface Converter<T,T1> {
 	
 	default void mostrarObjeto(T1 t1)
 	{
-		System.out.println("Objeto: "+t1.toString());
+		System.out.println("\nObjeto: "+t1.toString());
 	}
 }
