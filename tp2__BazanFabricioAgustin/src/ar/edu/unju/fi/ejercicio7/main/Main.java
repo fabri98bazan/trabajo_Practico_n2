@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import ar.edu.unju.fi.ejercicio7.model.Producto;
 import ar.edu.unju.fi.ejercicio7.model.Producto.categoria;
@@ -16,6 +21,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		productos= new ArrayList<>();
+		precargarProductos();
 		int opc=0;
 		do
 		{
@@ -24,15 +30,19 @@ public class Main {
 			switch(opc)
 			{
 				case 1:
+					mostrarProd();
 					break;
 					
 				case 2:
+					mostrarProdFaltantes();
 					break;
 					
 				case 3:
+					incrementoProd();
 					break;
 					
 				case 4:
+					mostrarProdHogarDisp();
 					break;
 					
 				case 5:
@@ -46,7 +56,7 @@ public class Main {
 				default: System.out.println("La opcion ingresada no es correcta");
 			}
 		}while(opc!=7);
-
+		sc.close();
 	}
 	
 	/**
@@ -130,5 +140,61 @@ public class Main {
 		Producto p15=new Producto(199,"Modem", 45600.00, false, org[1], cat[0]);
 		productos.add(p15);
 	}
+	
+	/**
+	 * Mostrar productos disponibles
+	 */
 
+	public static void mostrarProd()
+	{
+		Consumer<Producto> printConsumerProd= p->System.out.println(p);
+		productos.forEach(printConsumerProd);
+	}
+	
+	/**
+	 * Muestra los faltantes
+	 */
+	
+	public static void mostrarProdFaltantes()
+	{
+		List<Producto> faltantes = new ArrayList<>();
+		Predicate<Producto> filterDispProd=Producto->Producto.isProd_disponible()==false;
+		faltantes=productos.stream().filter(filterDispProd).collect(Collectors.toList());
+		Consumer<Producto> printConsumerProd= p->System.out.println(p);
+		faltantes.forEach(printConsumerProd);
+	}
+	
+	/**
+	 * Incrementar 20%
+	 */
+	
+	public static void incrementoProd()
+	{
+		Consumer<Producto> printConsumerProd= p->System.out.println(p);
+		
+		Function<Producto, Producto> producIncr=(p)->
+		{
+			double resultado=(p.getPrec_unitario()*0.20)+p.getPrec_unitario();
+			p.setPrec_unitario(resultado);
+			return p;
+		};
+		List<Producto> productosIncrementados=new ArrayList<>();
+		productosIncrementados=productos.stream().map(producIncr).collect(Collectors.toList());
+		productosIncrementados.forEach(printConsumerProd);
+		
+	}
+	
+	/**
+	 * Mostrar productos de ElectroHogar y disponibles
+	 */
+	public static void mostrarProdHogarDisp()
+	{
+		Consumer<Producto> printConsumerProd= p->System.out.println(p);
+		
+		List<Producto> disponible = new ArrayList<>();
+		Predicate<Producto> filterDispProd=p-> p.isProd_disponible() && p.getCategorias()==p.getCategorias().ELECTROHOGAR;
+		disponible=productos.stream().filter(filterDispProd).collect(Collectors.toList());
+		disponible.forEach(printConsumerProd);
+	}
+	
 }
