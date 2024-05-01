@@ -1,6 +1,7 @@
 package ar.edu.unju.fi.ejercicio7.main;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -46,9 +47,11 @@ public class Main {
 					break;
 					
 				case 5:
+					ordenarProductos();
 					break;
 					
 				case 6:
+					mostrarProdMayuscula();
 					break;
 					
 				case 7: System.out.println("Fin del Programa!!"); break;
@@ -195,6 +198,38 @@ public class Main {
 		Predicate<Producto> filterDispProd=p-> p.isProd_disponible() && p.getCategorias()==p.getCategorias().ELECTROHOGAR;
 		disponible=productos.stream().filter(filterDispProd).collect(Collectors.toList());
 		disponible.forEach(printConsumerProd);
+	}
+	
+	/**
+	 * Ordenar productos por precio descendente
+	 */
+	
+	public static void ordenarProductos()
+	{
+		Consumer<Producto> printConsumerProd= p->System.out.println(p);
+		productos.sort(Comparator.comparing(Producto::getPrec_unitario));
+		productos.forEach(printConsumerProd);
+
+	}
+	
+	/**
+	 * Mostar productos con nombres en mayusculas
+	 */
+	
+	public static void mostrarProdMayuscula()
+	{
+		Consumer<Producto> printConsumerProd= p->System.out.println(p);
+		
+		Function<Producto, Producto> producMayus=(p)->
+		{
+			String mayusString=p.getDescripción().toUpperCase();
+			p.setDescripción(mayusString);
+			return p;
+		};
+		List<Producto> productosMayus=new ArrayList<>();
+		productosMayus=productos.stream().map(producMayus).collect(Collectors.toList());
+		productosMayus.forEach(printConsumerProd);
+		
 	}
 	
 }
